@@ -21,8 +21,8 @@ echo "🏗️ Building application..."
 npm run build
 
 # 5. Restart PM2 agar status aplikasi terupdate
-# Pastikan nama proses di PM2 adalah "po-lokal"
-echo "♻️ Restarting PM2 process..."
-pm2 restart po-lokal || pm2 start npm --name "po-lokal" -- start
+# Menjalankan di port 3005
+echo "♻️ Restarting PM2 process on port 3005..."
+PORT=3005 pm2 restart po-lokal || PORT=3005 pm2 start npm --name "po-lokal" -- start
 
 echo "✅ Deployment selesai! Aplikasi sudah berjalan dengan versi terbaru."
