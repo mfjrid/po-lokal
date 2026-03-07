@@ -8,7 +8,7 @@ import { notFound } from "next/navigation";
 import { Calendar, Users, ShoppingCart, ArrowLeft, ShieldCheck } from "lucide-react";
 import dayjs from "dayjs";
 
-export default async function ProductDetailPage({ params }: { params: { id: string } }) {
+export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
 
     const product = await prisma.product.findUnique({

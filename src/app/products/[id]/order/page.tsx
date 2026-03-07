@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { use, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,7 +8,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Loader2, ArrowLeft, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 
-export default function OrderPage({ params }: { params: { id: string } }) {
+export default function OrderPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params);
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState("");
@@ -32,7 +33,7 @@ export default function OrderPage({ params }: { params: { id: string } }) {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    productId: params.id,
+                    productId: id,
                     buyerData,
                     quantity,
                 }),
@@ -56,7 +57,7 @@ export default function OrderPage({ params }: { params: { id: string } }) {
     return (
         <div className="min-h-screen bg-slate-50 py-12 px-4">
             <div className="max-w-2xl mx-auto">
-                <Link href={`/products/${params.id}`} className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-primary mb-8">
+                <Link href={`/products/${id}`} className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-primary mb-8">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Batal & Kembali
                 </Link>
