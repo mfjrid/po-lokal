@@ -16,13 +16,13 @@ npm install
 echo "🗄️ Syncing database..."
 npx prisma db push
 
-# 4. Build aplikasi untuk production
-echo "🏗️ Building application..."
-npm run build
+# 4. Build dan Jalankan Container Docker
+echo "🐳 Building and starting Docker containers..."
+docker-compose down
+docker-compose up --build -d
 
-# 5. Restart PM2 agar status aplikasi terupdate
-# Menjalankan di port 3006 (untuk menghindari konflik port 3005)
-echo "♻️ Restarting PM2 process on port 3006..."
-PORT=3006 pm2 restart po-lokal || PORT=3006 pm2 start npm --name "po-lokal" -- start
+# 5. Jalankan Migrasi Prisma di dalam Container
+echo "💾 Running Prisma migrations..."
+docker-compose exec -T app npx prisma db push
 
-echo "✅ Deployment selesai! Aplikasi sudah berjalan dengan versi terbaru."
+echo "✅ Deployment selesai! Aplikasi sudah berjalan di Docker (Port 3006)."
