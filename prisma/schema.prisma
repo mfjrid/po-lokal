@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String   // hash
+  phone     String?
+  role      String   @default("seller") // "seller" atau "admin"
+  products  Product[]
+  createdAt DateTime @default(now())
+}
+
+model Buyer {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  phone     String
+  address   String?
+  orders    Order[]
+  createdAt DateTime @default(now())
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  sellerId    String
+  seller      User     @relation(fields: [sellerId], references: [id])
+  name        String
+  description String
+  price       Int      // dalam rupiah
+  imageUrl    String?
+  quota       Int      // total kuota pre-order
+  sold        Int      @default(0) // jumlah terjual
+  expiredAt   DateTime // batas waktu pre-order
+  isActive    Boolean  @default(true)
+  orders      Order[]
+  createdAt   DateTime @default(now())
+}
+
+model Order {
+  id          String   @id @default(cuid())
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+  buyerId     String?
+  buyer       Buyer?   @relation(fields: [buyerId], references: [id])
+  quantity    Int
+  totalPrice  Int
+  status      String   @default("pending") // pending, paid, expired, failed
+  paymentLink String?  // URL payment link dari Mayar
+  paymentRef  String?  // reference dari Mayar (jika ada)
+  paidAt      DateTime?
+  createdAt   DateTime @default(now())
+}
