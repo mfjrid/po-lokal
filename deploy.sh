@@ -18,11 +18,11 @@ npx prisma db push
 
 # 4. Build dan Jalankan Container Docker
 echo "🐳 Building and starting Docker containers..."
-docker-compose down
-docker-compose up --build -d
+docker compose down
+docker compose up --build -d
 
 # 5. Jalankan Migrasi Prisma di dalam Container
 echo "💾 Running Prisma migrations..."
-docker-compose exec -T app npx prisma db push
+docker compose exec -T app npx prisma db push
 
 echo "✅ Deployment selesai! Aplikasi sudah berjalan di Docker (Port 3006)."
