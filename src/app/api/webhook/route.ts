@@ -11,17 +11,24 @@ export async function POST(req: Request) {
 
         // Both payment.success and payment.received are common event names depending on API version
         if (event === "payment.success" || event === "payment.received") {
-            // We use id_custom as the primary identifier because we set it in the order creation
-            const orderId = data.id_custom || data.description?.match(/#([a-zA-Z0-9]+)/)?.[1];
+            // Coba ambil dari id_custom jika ada, kalau tidak ekstrak 6 karakter terakhir dari productDescription
+            const shortId = data.productDescription?.match(/#([a-zA-Z0-9]+)/)?.[1];
+            const explicitId = data.id_custom || data.customId;
 
-            if (!orderId) {
-                console.warn("No Order ID found in webhook payload:", data.id);
-                return NextResponse.json({ message: "Order ID not found" }, { status: 400 });
+            let order;
+
+            if (explicitId) {
+                order = await prisma.order.findUnique({ where: { id: String(explicitId) } });
+            } else if (shortId) {
+                order = await prisma.order.findFirst({
+                    where: { id: { endsWith: shortId } }
+                });
             }
 
-            const order = await prisma.order.findUnique({
-                where: { id: orderId },
-            });
+            if (!order) {
+                console.warn("No matching Order found in webhook payload:", data);
+                return NextResponse.json({ message: "Order not found for this payment" }, { status: 404 });
+            }
 
             if (order && order.status !== "paid") {
                 await prisma.$transaction([
