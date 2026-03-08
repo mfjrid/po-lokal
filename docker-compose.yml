@@ -5,17 +5,8 @@ services:
       dockerfile: Dockerfile
     container_name: po-lokal
     restart: always
-    ports:
-      - "3006:3006"
+    network_mode: "host"
     env_file:
       - .env
     environment:
       - PORT=3006
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    networks:
-      - po-lokal-network
-
-networks:
-  po-lokal-network:
-    driver: bridge
