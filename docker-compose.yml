@@ -10,3 +10,6 @@ services:
       - .env
     environment:
       - PORT=3006
+      - AUTH_TRUST_HOST=true
+      - AUTH_URL=${NEXTAUTH_URL}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
