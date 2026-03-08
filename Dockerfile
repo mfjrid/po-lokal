@@ -1,45 +1,51 @@
 # Multi-stage build for Next.js 15
 FROM node:18-alpine AS base
 
-# 1. Dependencies and Build
-FROM base AS builder
+# 1. Dependencies stage
+FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Install dependencies first (for better caching)
 COPY package.json package-lock.json ./
 RUN npm ci
 
-# Copy source and prisma
+# 2. Build stage
+FROM base AS builder
+WORKDIR /app
+
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+# Generate Prisma client
 RUN npx prisma generate
 
-# Build application
+# Build the application
 RUN npm run build
 
-# 2. Production stage
+# 3. Production stage
 FROM base AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
-# Set port to 3006
-ENV PORT 3006
-ENV HOSTNAME "0.0.0.0"
+ENV NODE_ENV=production
+ENV PORT=3006
+ENV HOSTNAME="0.0.0.0"
 
-# Create a non-privileged user
+# Create non-root user
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy essential files
+# Copy standalone output
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Copy Prisma files for migrations
 COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules/@prisma ./node_modules/@prisma
 
 USER nextjs
 
 EXPOSE 3006
 
-# Use start script
-CMD ["npm", "start"]
+CMD ["node", "server.js"]

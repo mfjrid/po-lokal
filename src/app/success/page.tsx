@@ -6,7 +6,7 @@ import { CheckCircle, ArrowRight, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-export default async function SuccessPage({ searchParams }: { searchParams: { orderId: string } }) {
+export default async function SuccessPage({ searchParams }: { searchParams: Promise<{ orderId: string }> }) {
     const { orderId } = await searchParams;
 
     if (!orderId) {
