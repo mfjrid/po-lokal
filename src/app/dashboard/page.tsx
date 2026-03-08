@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
+
+export const dynamic = 'force-dynamic';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Package, Users, ShoppingCart, TrendingUp } from "lucide-react";
 

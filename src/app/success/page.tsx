@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Navbar } from "@/components/layout/navbar";
+
+export const dynamic = 'force-dynamic';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, ArrowRight, ShoppingBag } from "lucide-react";

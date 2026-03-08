@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
 import { auth } from "@/auth";
+
+export const dynamic = 'force-dynamic';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";

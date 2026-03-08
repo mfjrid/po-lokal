@@ -11,11 +11,8 @@ services:
       - .env
     environment:
       - PORT=3006
-      - DATABASE_URL=${DATABASE_URL}
-      - NEXTAUTH_URL=${NEXTAUTH_URL}
-      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
-      - MAYAR_API_KEY=${MAYAR_API_KEY}
-      - MAYAR_BASE_URL=${MAYAR_BASE_URL}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - po-lokal-network
 

@@ -1,5 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Navbar } from "@/components/layout/navbar";
+
+export const dynamic = 'force-dynamic';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
